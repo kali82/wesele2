@@ -10,78 +10,94 @@ const guests = [
   { id: "g09", row: 10, name: "Michał Kaliszewski" },
   { id: "g10", row: 11, name: "Klaudia Jarosz" },
   { id: "g11", row: 12, name: "Agnieszka Keller" },
-  { id: "g12", row: 13, name: "Krystian Keller" },
-  { id: "g13", row: 14, name: "Paulina Głowacka" },
-  { id: "g14", row: 15, name: "Robert Głowacki" },
-  { id: "g15", row: 16, name: "Krystian Bedynek" },
-  { id: "g16", row: 17, name: "Kamila Holak" },
-  { id: "g17", row: 18, name: "Maria Majewska" },
-  { id: "g18", row: 19, name: "Dariusz Majewski" },
-  { id: "g19", row: 20, name: "Ania Markowska" },
-  { id: "g20", row: 21, name: "Łukasz Markowski" },
-  { id: "g21", row: 22, name: "Weronika Jakubowska" },
-  { id: "g22", row: 23, name: "Szymon Jakubowski" },
-  { id: "g23", row: 24, name: "Kamil Cendalski" },
-  { id: "g24", row: 25, name: "Julia Maciejewska" },
-  { id: "g25", row: 26, name: "Agnieszka Stochniał" },
-  { id: "g26", row: 27, name: "Maciek Kaczanowski" },
-  { id: "g27", row: 28, name: "Aleksandra Zając" },
-  { id: "g28", row: 29, name: "Kamil Zając" },
-  { id: "g29", row: 30, name: "Michalina Karecińska" },
-  { id: "g30", row: 31, name: "Mateusz Kareciński" },
-  { id: "g31", row: 32, name: "Anna Kłos" },
-  { id: "g32", row: 33, name: "Adam Kłos" },
-  { id: "g33", row: 34, name: "Jagoda Bedynek" },
-  { id: "g34", row: 35, name: "Robert Bedynek" },
-  { id: "g35", row: 36, name: "Adrian Parafińśki" },
-  { id: "g36", row: 37, name: "Anna Kusz / Parafińska" },
-  { id: "g37", row: 38, name: "Bożena Dembek" },
-  { id: "g38", row: 39, name: "Janusz Dembek" },
-  { id: "g39", row: 40, name: "Tomek Dembek" },
-  { id: "g40", row: 41, name: "Olga Dembek" },
-  { id: "g41", row: 42, name: "Maja Dembek" },
-  { id: "g42", row: 43, name: "Os Tow /" },
-  { id: "g43", row: 44, name: "Joanna Dembek-Feiz" },
-  { id: "g44", row: 45, name: "Dariusz Feiz" },
-  { id: "g45", row: 46, name: "Lidia Gałek" },
-  { id: "g46", row: 47, name: "Roman" },
-  { id: "g47", row: 48, name: "Aleksandra Dudziak" },
-  { id: "g48", row: 49, name: "Paweł Dudziak" },
-  { id: "g49", row: 50, name: "Katarzyna Gałek" },
-  { id: "g50", row: 51, name: "Paweł Kopyść" },
-  { id: "g51", row: 52, name: "Basia Cisło" },
-  { id: "g52", row: 53, name: "Józef Bejczak" },
-  { id: "g53", row: 54, name: "Małgorzata Bejczak" },
-  { id: "g54", row: 55, name: "Barbara Łoza" },
-  { id: "g55", row: 56, name: "Marta Łoza" },
-  { id: "g56", row: 59, name: "Rafał Stachura" },
-  { id: "g57", row: 60, name: "Marzena Motykiewicz" },
-  { id: "g58", row: 61, name: "Marcin Stachura" },
-  { id: "g59", row: 62, name: "Paulina Stachura" },
-  { id: "g60", row: 63, name: "Józef Stachura" },
-  { id: "g61", row: 64, name: "Zofia Stachura" },
-  { id: "g62", row: 67, name: "Sławomir Długosz" },
-  { id: "g63", row: 68, name: "Anna Długosz" },
-  { id: "g64", row: 70, name: "Michał Kaliszewski" },
-  { id: "g65", row: 71, name: "Agnieszka Kaliszewska" },
-  { id: "g66", row: 78, name: "Tomasz Rogula" },
-  { id: "g67", row: 79, name: "Anna Rogula" },
-  { id: "g68", row: 89, name: "Stanisław Kowalski" },
-  { id: "g69", row: 90, name: "Iwona Kowalska" },
-  { id: "g70", row: 91, name: "Paulina Kowalska" },
-  { id: "g71", row: 92, name: "Szymon Stefańczyk" },
-  { id: "g72", row: 97, name: "Grzegorz Poddębniak" },
-  { id: "g73", row: 98, name: "Bogumiła Poddębniak" },
-  { id: "g74", row: 100, name: "Łukasz Łazarski" },
-  { id: "g75", row: 101, name: "Katarzyna Łazarska" },
-  { id: "g76", row: 108, name: "Karolina Poddębniak-Strama" },
-  { id: "g77", row: 109, name: "Kamil Poddębniak-Strama" },
-  { id: "g78", row: 110, name: "Kamil Malinowski" },
-  { id: "g79", row: 114, name: "Katarzyna Kaliszewska" },
-  { id: "g80", row: 115, name: "Piotr Kaliszewski" },
+  { id: "g81", row: 13, name: "Miłosz Keller" },
+  { id: "g82", row: 14, name: "Tobiasz Keller" },
+  { id: "g12", row: 15, name: "Krystian Keller" },
+  { id: "g13", row: 16, name: "Paulina Głowacka" },
+  { id: "g14", row: 17, name: "Robert Głowacki" },
+  { id: "g15", row: 18, name: "Krystian Bedynek" },
+  { id: "g16", row: 19, name: "Kamila Holak" },
+  { id: "g17", row: 20, name: "Maria Majewska" },
+  { id: "g18", row: 21, name: "Dariusz Majewski" },
+  { id: "g19", row: 22, name: "Ania Markowska" },
+  { id: "g20", row: 23, name: "Łukasz Markowski" },
+  { id: "g21", row: 24, name: "Weronika Jakubowska" },
+  { id: "g22", row: 25, name: "Szymon Jakubowski" },
+  { id: "g23", row: 26, name: "Kamil Cendalski" },
+  { id: "g24", row: 27, name: "Julia Maciejewska" },
+  { id: "g25", row: 28, name: "Agnieszka Stochniał" },
+  { id: "g26", row: 29, name: "Maciek Kaczanowski" },
+  { id: "g27", row: 30, name: "Aleksandra Zając" },
+  { id: "g28", row: 31, name: "Kamil Zając" },
+  { id: "g29", row: 32, name: "Michalina Karecińska" },
+  { id: "g30", row: 33, name: "Mateusz Kareciński" },
+  { id: "g31", row: 34, name: "Anna Kłos" },
+  { id: "g32", row: 35, name: "Adam Kłos" },
+  { id: "g33", row: 36, name: "Jagoda Bedynek" },
+  { id: "g34", row: 37, name: "Robert Bedynek" },
+  { id: "g35", row: 38, name: "Adrian Parafińśki" },
+  { id: "g36", row: 39, name: "Anna Kusz / Parafińska" },
+  { id: "g37", row: 40, name: "Bożena Dembek" },
+  { id: "g38", row: 41, name: "Janusz Dembek" },
+  { id: "g39", row: 42, name: "Tomek Dembek" },
+  { id: "g40", row: 43, name: "Olga Dembek" },
+  { id: "g41", row: 44, name: "Maja Dembek" },
+  { id: "g42", row: 45, name: "Os Tow /" },
+  { id: "g43", row: 46, name: "Joanna Dembek-Feiz" },
+  { id: "g44", row: 47, name: "Dariusz Feiz" },
+  { id: "g45", row: 48, name: "Lidia Gałek" },
+  { id: "g46", row: 49, name: "Roman" },
+  { id: "g47", row: 50, name: "Aleksandra Dudziak" },
+  { id: "g48", row: 51, name: "Paweł Dudziak" },
+  { id: "g49", row: 52, name: "Katarzyna Gałek" },
+  { id: "g50", row: 53, name: "Paweł Kopyść" },
+  { id: "g51", row: 54, name: "Basia Cisło" },
+  { id: "g52", row: 55, name: "Józef Bejczak" },
+  { id: "g53", row: 56, name: "Małgorzata Bejczak" },
+  { id: "g54", row: 57, name: "Barbara Łoza" },
+  { id: "g55", row: 58, name: "Marta Łoza" },
+  { id: "g56", row: 61, name: "Rafał Stachura" },
+  { id: "g83", row: 62, name: "Alicja Stachura" },
+  { id: "g57", row: 63, name: "Marzena Motykiewicz" },
+  { id: "g58", row: 64, name: "Marcin Stachura" },
+  { id: "g59", row: 65, name: "Paulina Stachura" },
+  { id: "g60", row: 66, name: "Józef Stachura" },
+  { id: "g61", row: 67, name: "Zofia Stachura" },
+  { id: "g62", row: 70, name: "Sławomir Długosz" },
+  { id: "g63", row: 71, name: "Anna Długosz" },
+  { id: "g64", row: 73, name: "Michał Kaliszewski" },
+  { id: "g65", row: 74, name: "Agnieszka Kaliszewska" },
+  { id: "g66", row: 81, name: "Tomasz Rogula" },
+  { id: "g67", row: 82, name: "Anna Rogula" },
+  { id: "g68", row: 92, name: "Stanisław Kowalski" },
+  { id: "g69", row: 93, name: "Iwona Kowalska" },
+  { id: "g70", row: 94, name: "Paulina Kowalska" },
+  { id: "g71", row: 95, name: "Szymon Stefańczyk" },
+  { id: "g72", row: 100, name: "Grzegorz Poddębniak" },
+  { id: "g73", row: 101, name: "Bogumiła Poddębniak" },
+  { id: "g74", row: 103, name: "Łukasz Łazarski" },
+  { id: "g84", row: 104, name: "Iga Łazarska" },
+  { id: "g75", row: 105, name: "Katarzyna Łazarska" },
+  { id: "g76", row: 112, name: "Karolina Poddębniak-Strama" },
+  { id: "g77", row: 113, name: "Kamil Poddębniak-Strama" },
+  { id: "g78", row: 114, name: "Kamil Malinowski" },
+  { id: "g79", row: 118, name: "Katarzyna Kaliszewska" },
+  { id: "g80", row: 119, name: "Piotr Kaliszewski" },
+  { id: "g85", row: 120, name: "Ola Ostromecka" },
+  { id: "g86", row: 121, name: "Przemysław Barłodziej" },
 ];
 
-const tables = [
+const reserveGuests = [
+  { id: "r75", row: 75, name: "Faustyna Kaliszewska" },
+  { id: "r76", row: 76, name: "Os tow" },
+  { id: "r91", row: 91, name: "Grzegorz Kaliszewski" },
+  { id: "r102", row: 102, name: "Bernadeta Łazarska" },
+  { id: "r115", row: 115, name: "Os tow" },
+  { id: "r116", row: 116, name: "Olga Długosz-Ramalho" },
+  { id: "r117", row: 117, name: "Tiago Ramalho" },
+];
+
+const defaultTables = [
   { id: "rectangular", name: "Stół prostokątny", capacity: 6, shape: "rectangle", locked: true },
   ...Array.from({ length: 8 }, (_, index) => ({
     id: `round-${index + 1}`,
@@ -108,14 +124,21 @@ let toastTimer = null;
 const statsElement = document.querySelector("#stats");
 const unassignedList = document.querySelector("#unassignedList");
 const unassignedCount = document.querySelector("#unassignedCount");
+const reserveList = document.querySelector("#reserveList");
+const reserveCount = document.querySelector("#reserveCount");
 const tablesGrid = document.querySelector("#tablesGrid");
 const planNotice = document.querySelector("#planNotice");
 const searchInput = document.querySelector("#guestSearch");
 const toast = document.querySelector("#toast");
+const planFileInput = document.querySelector("#planFileInput");
 
 document.querySelector("#exportCsv").addEventListener("click", exportCsv);
+document.querySelector("#savePlan").addEventListener("click", savePlanToFile);
+document.querySelector("#loadPlan").addEventListener("click", () => planFileInput.click());
+document.querySelector("#addTable").addEventListener("click", addTable);
 document.querySelector("#clearRoundTables").addEventListener("click", clearRoundTables);
 document.querySelector("#resetPlan").addEventListener("click", resetPlan);
+planFileInput.addEventListener("change", importPlanFromFile);
 searchInput.addEventListener("input", renderUnassigned);
 unassignedList.addEventListener("dragover", handleDragOver);
 unassignedList.addEventListener("dragleave", handleDragLeave);
@@ -140,6 +163,7 @@ unassignedList.addEventListener("click", () => {
 render();
 
 function createDefaultState() {
+  const tables = cloneDefaultTables();
   const assignments = Object.fromEntries(
     tables.map((table) => [table.id, Array(table.capacity).fill(null)]),
   );
@@ -148,7 +172,7 @@ function createDefaultState() {
     assignments.rectangular[index] = guestId;
   });
 
-  return { assignments };
+  return { tables, assignments };
 }
 
 function loadState() {
@@ -161,38 +185,84 @@ function loadState() {
 
   try {
     const parsed = JSON.parse(stored);
-    return validateState(parsed) ? parsed : fallback;
+    return normalizeState(parsed) || fallback;
   } catch {
     return fallback;
   }
 }
 
-function validateState(candidate) {
-  if (!candidate?.assignments) {
-    return false;
+function cloneDefaultTables() {
+  return defaultTables.map((table) => ({ ...table }));
+}
+
+function normalizeState(candidate) {
+  const source = candidate?.state || candidate;
+
+  if (!source?.assignments) {
+    return null;
   }
 
-  const seen = new Set();
-  for (const table of tables) {
-    const seats = candidate.assignments[table.id];
-    if (!Array.isArray(seats) || seats.length !== table.capacity) {
-      return false;
-    }
-
-    for (const guestId of seats) {
-      if (guestId === null) {
-        continue;
-      }
-      if (!guestById.has(guestId) || seen.has(guestId)) {
-        return false;
-      }
-      seen.add(guestId);
-    }
-  }
-
-  return initialRectangularGuests.every(
-    (guestId, index) => candidate.assignments.rectangular[index] === guestId,
+  const tables = normalizeTables(source.tables);
+  const assignments = Object.fromEntries(
+    tables.map((table) => [table.id, Array(table.capacity).fill(null)]),
   );
+  const seen = new Set();
+
+  tables.forEach((table) => {
+    if (table.locked) {
+      return;
+    }
+
+    const seats = source.assignments[table.id];
+    if (!Array.isArray(seats)) {
+      return;
+    }
+
+    seats.slice(0, table.capacity).forEach((guestId, index) => {
+      if (!guestId || lockedGuestIds.has(guestId) || !guestById.has(guestId) || seen.has(guestId)) {
+        return;
+      }
+
+      assignments[table.id][index] = guestId;
+      seen.add(guestId);
+    });
+  });
+
+  initialRectangularGuests.forEach((guestId, index) => {
+    assignments.rectangular[index] = guestId;
+    seen.add(guestId);
+  });
+
+  return { tables, assignments };
+}
+
+function normalizeTables(candidateTables) {
+  const sourceTables = Array.isArray(candidateTables) ? candidateTables : defaultTables;
+  const tables = [cloneDefaultTables()[0]];
+  const seenIds = new Set(["rectangular"]);
+
+  sourceTables.forEach((table) => {
+    if (!table || table.id === "rectangular") {
+      return;
+    }
+
+    const id = String(table.id || "").trim();
+    if (!id || seenIds.has(id)) {
+      return;
+    }
+
+    const capacity = Number.parseInt(table.capacity, 10);
+    tables.push({
+      id,
+      name: String(table.name || "Stół").trim() || "Stół",
+      capacity: Number.isInteger(capacity) && capacity > 0 && capacity <= 30 ? capacity : 10,
+      shape: table.shape === "rectangle" ? "rectangle" : "round",
+      locked: false,
+    });
+    seenIds.add(id);
+  });
+
+  return Array.isArray(candidateTables) ? tables : cloneDefaultTables();
 }
 
 function saveState() {
@@ -202,15 +272,18 @@ function saveState() {
 function render() {
   renderStats();
   renderUnassigned();
+  renderReserveGuests();
   renderTables();
 }
 
 function renderStats() {
+  const tables = getTables();
   const assigned = getAssignedIds().size;
   const capacity = tables.reduce((sum, table) => sum + table.capacity, 0);
-  const roundAssigned = tables
-    .filter((table) => table.shape === "round")
+  const roundTables = tables.filter((table) => table.shape === "round");
+  const roundAssigned = roundTables
     .reduce((sum, table) => sum + state.assignments[table.id].filter(Boolean).length, 0);
+  const roundCapacity = roundTables.reduce((sum, table) => sum + table.capacity, 0);
 
   statsElement.innerHTML = [
     statHtml(guests.length, "Potwierdzeni"),
@@ -220,11 +293,10 @@ function renderStats() {
   ].join("");
 
   const unassigned = guests.length - assigned;
-  const remainingRoundSeats = 80 - roundAssigned;
   planNotice.textContent =
     unassigned === 0
-      ? `Wszyscy przypisani. Wolne miejsca przy okrągłych stołach: ${remainingRoundSeats}.`
-      : `Okrągłe stoły: ${roundAssigned}/80.`;
+      ? `Wszyscy przypisani. Wolne miejsca przy okrągłych stołach: ${roundCapacity - roundAssigned}.`
+      : `Okrągłe stoły: ${roundAssigned}/${roundCapacity}.`;
 }
 
 function statHtml(value, label) {
@@ -253,10 +325,19 @@ function renderUnassigned() {
   });
 }
 
+function renderReserveGuests() {
+  reserveCount.textContent = `${reserveGuests.length} osób`;
+  reserveList.innerHTML = "";
+
+  reserveGuests.forEach((guest) => {
+    reserveList.append(createReserveChip(guest));
+  });
+}
+
 function renderTables() {
   tablesGrid.innerHTML = "";
 
-  tables.forEach((table) => {
+  getTables().forEach((table) => {
     const seats = state.assignments[table.id];
     const taken = seats.filter(Boolean).length;
     const card = document.createElement("article");
@@ -267,10 +348,11 @@ function renderTables() {
       <div class="table-head">
         <div class="table-symbol" aria-hidden="true"></div>
         <div class="table-title">
-          <strong>${table.name}</strong>
+          <strong>${escapeHtml(table.name)}</strong>
           <span class="capacity">${table.locked ? "stały skład" : `${table.capacity} miejsc`}</span>
         </div>
         <div class="status-pill">${taken}/${table.capacity}</div>
+        ${table.locked ? "" : `<button class="remove-table" type="button" title="Usuń stół" aria-label="Usuń stół">×</button>`}
       </div>
     `;
 
@@ -283,6 +365,10 @@ function renderTables() {
 
     card.append(seatList);
     if (!table.locked) {
+      card.querySelector(".remove-table").addEventListener("click", (event) => {
+        event.stopPropagation();
+        removeTable(table.id);
+      });
       card.addEventListener("dragover", handleDragOver);
       card.addEventListener("dragleave", handleDragLeave);
       card.addEventListener("drop", (event) => {
@@ -340,7 +426,7 @@ function createGuestChip(guestId, locked = false) {
   const duplicateLabel = nameCounts.get(guest.name) > 1 ? `wiersz ${guest.row}` : "";
   chip.innerHTML = `
     <span class="guest-main">
-      <span class="guest-name">${guest.name}</span>
+      <span class="guest-name">${escapeHtml(guest.name)}</span>
       ${duplicateLabel ? `<span class="guest-meta">${duplicateLabel}</span>` : ""}
     </span>
   `;
@@ -388,6 +474,20 @@ function createGuestChip(guestId, locked = false) {
       chip.click();
     }
   });
+
+  return chip;
+}
+
+function createReserveChip(guest) {
+  const chip = document.createElement("div");
+  chip.className = "guest-chip reserve-chip locked";
+  chip.title = `${guest.name}, wiersz Excela ${guest.row}`;
+  chip.innerHTML = `
+    <span class="guest-main">
+      <span class="guest-name">${escapeHtml(guest.name)}</span>
+      <span class="guest-meta">wiersz ${guest.row}</span>
+    </span>
+  `;
 
   return chip;
 }
@@ -456,8 +556,57 @@ function unassignGuest(guestId) {
   state.assignments[location.tableId][location.index] = null;
 }
 
+function addTable() {
+  const table = {
+    id: `custom-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    name: `Stół okrągły ${getNextRoundTableNumber()}`,
+    capacity: 10,
+    shape: "round",
+    locked: false,
+  };
+
+  state.tables.push(table);
+  state.assignments[table.id] = Array(table.capacity).fill(null);
+  selectedGuestId = null;
+  persistAndRender();
+  showToast(`Dodano ${table.name}`);
+}
+
+function removeTable(tableId) {
+  const table = getTables().find((item) => item.id === tableId);
+  if (!table || table.locked) {
+    return;
+  }
+
+  const assignedCount = state.assignments[tableId].filter(Boolean).length;
+  const confirmed =
+    assignedCount === 0 ||
+    window.confirm(
+      `Usunąć ${table.name}? ${assignedCount} gości wróci do listy nieprzydzielonych.`,
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  state.tables = state.tables.filter((item) => item.id !== tableId);
+  delete state.assignments[tableId];
+  selectedGuestId = null;
+  persistAndRender();
+  showToast(`Usunięto ${table.name}`);
+}
+
+function getNextRoundTableNumber() {
+  return (
+    getTables().reduce((highest, table) => {
+      const match = /^Stół okrągły (\d+)$/.exec(table.name);
+      return match ? Math.max(highest, Number(match[1])) : highest;
+    }, 0) + 1
+  );
+}
+
 function clearRoundTables() {
-  tables
+  getTables()
     .filter((table) => table.shape === "round")
     .forEach((table) => {
       state.assignments[table.id] = Array(table.capacity).fill(null);
@@ -480,10 +629,14 @@ function persistAndRender() {
   render();
 }
 
+function getTables() {
+  return state.tables;
+}
+
 function getAssignedIds() {
   const ids = new Set();
-  Object.values(state.assignments).forEach((seats) => {
-    seats.forEach((guestId) => {
+  getTables().forEach((table) => {
+    state.assignments[table.id].forEach((guestId) => {
       if (guestId) {
         ids.add(guestId);
       }
@@ -502,7 +655,7 @@ function isAssigned(guestId) {
 }
 
 function findGuestLocation(guestId) {
-  for (const table of tables) {
+  for (const table of getTables()) {
     const index = state.assignments[table.id].indexOf(guestId);
     if (index !== -1) {
       return { tableId: table.id, index };
@@ -518,10 +671,48 @@ function normalizeText(value) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+function savePlanToFile() {
+  const payload = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    tables: state.tables,
+    assignments: state.assignments,
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+  downloadBlob(blob, `plan-stolow-wesele-${new Date().toISOString().slice(0, 10)}.json`);
+  showToast("Zapisano plan stołów");
+}
+
+async function importPlanFromFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(await file.text());
+    const nextState = normalizeState(parsed);
+    if (!nextState) {
+      throw new Error("Invalid plan file");
+    }
+
+    state = nextState;
+    selectedGuestId = null;
+    searchInput.value = "";
+    persistAndRender();
+    showToast("Wczytano plan stołów");
+  } catch {
+    showToast("Nie udało się wczytać pliku planu");
+  } finally {
+    event.target.value = "";
+  }
+}
+
 function exportCsv() {
   const rows = [["Stół", "Miejsce", "Osoba", "Wiersz Excela"]];
 
-  tables.forEach((table) => {
+  getTables().forEach((table) => {
     state.assignments[table.id].forEach((guestId, index) => {
       const guest = guestId ? guestById.get(guestId) : null;
       rows.push([
@@ -537,18 +728,39 @@ function exportCsv() {
     rows.push(["Nieprzydzieleni", "", guest.name, String(guest.row)]);
   });
 
+  reserveGuests.forEach((guest) => {
+    rows.push(["Rezerwowi", "", guest.name, String(guest.row)]);
+  });
+
   const csv = rows
     .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(";"))
     .join("\n");
   const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+  downloadBlob(blob, "plan-stolow-wesele.csv");
+}
+
+function downloadBlob(blob, fileName) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "plan-stolow-wesele.csv";
+  link.download = fileName;
   document.body.append(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    };
+    return entities[character];
+  });
 }
 
 function showToast(message) {

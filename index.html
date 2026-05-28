@@ -20,27 +20,45 @@
 
       <div class="actions">
         <button class="button" id="exportCsv" type="button">CSV</button>
+        <button class="button" id="savePlan" type="button">Zapisz plan</button>
+        <button class="button" id="loadPlan" type="button">Wczytaj plan</button>
         <button class="button" id="clearRoundTables" type="button">Wyczyść okrągłe</button>
         <button class="button danger" id="resetPlan" type="button">Reset</button>
+        <input id="planFileInput" type="file" accept="application/json,.json" hidden />
       </div>
     </header>
 
     <main class="app-shell">
       <aside class="guest-panel">
-        <div class="panel-top">
-          <div>
-            <h2>Nieprzydzieleni</h2>
-            <span id="unassignedCount" class="muted"></span>
+        <section class="guest-section unassigned-section">
+          <div class="panel-top">
+            <div>
+              <h2>Nieprzydzieleni</h2>
+              <span id="unassignedCount" class="muted"></span>
+            </div>
+            <input id="guestSearch" class="search" type="search" placeholder="Szukaj osoby" />
           </div>
-          <input id="guestSearch" class="search" type="search" placeholder="Szukaj osoby" />
-        </div>
-        <div id="unassignedList" class="guest-list drop-target" data-target="unassigned"></div>
+          <div id="unassignedList" class="guest-list drop-target" data-target="unassigned"></div>
+        </section>
+
+        <section class="guest-section reserve-section">
+          <div class="panel-top">
+            <div>
+              <h2>Rezerwowi</h2>
+              <span id="reserveCount" class="muted"></span>
+            </div>
+          </div>
+          <div id="reserveList" class="guest-list reserve-list"></div>
+        </section>
       </aside>
 
       <section class="tables-panel">
         <div class="section-top">
-          <h2>Stoły</h2>
-          <div id="planNotice" class="notice"></div>
+          <div>
+            <h2>Stoły</h2>
+            <div id="planNotice" class="notice"></div>
+          </div>
+          <button class="button" id="addTable" type="button">Dodaj stół</button>
         </div>
         <div id="tablesGrid" class="tables-grid"></div>
       </section>
