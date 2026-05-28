@@ -108,14 +108,12 @@ const defaultTables = [
   })),
 ];
 
+const minEditableTableCapacity = 10;
+const maxEditableTableCapacity = 30;
 const initialRectangularGuests = ["g02", "g01", "g13", "g14", "g15", "g16"];
 const lockedGuestIds = new Set(initialRectangularGuests);
 const storageKey = "wesele-table-plan-v1";
-const guestById = new Map(guests.map((guest) => [guest.id, guest]));
-const nameCounts = guests.reduce((counts, guest) => {
-  counts.set(guest.name, (counts.get(guest.name) || 0) + 1);
-  return counts;
-}, new Map());
+const staticGuestById = new Map([...guests, ...reserveGuests].map((guest) => [guest.id, guest]));
 
 let state = loadState();
 let selectedGuestId = null;
@@ -126,7 +124,10 @@ const unassignedList = document.querySelector("#unassignedList");
 const unassignedCount = document.querySelector("#unassignedCount");
 const reserveList = document.querySelector("#reserveList");
 const reserveCount = document.querySelector("#reserveCount");
+const addGuestForm = document.querySelector("#addGuestForm");
+const newGuestNameInput = document.querySelector("#newGuestName");
 const tablesGrid = document.querySelector("#tablesGrid");
+const floorPlan = document.querySelector("#floorPlan");
 const planNotice = document.querySelector("#planNotice");
 const searchInput = document.querySelector("#guestSearch");
 const toast = document.querySelector("#toast");
@@ -139,6 +140,7 @@ document.querySelector("#addTable").addEventListener("click", addTable);
 document.querySelector("#clearRoundTables").addEventListener("click", clearRoundTables);
 document.querySelector("#resetPlan").addEventListener("click", resetPlan);
 planFileInput.addEventListener("change", importPlanFromFile);
+addGuestForm.addEventListener("submit", addCustomGuest);
 searchInput.addEventListener("input", renderUnassigned);
 unassignedList.addEventListener("dragover", handleDragOver);
 unassignedList.addEventListener("dragleave", handleDragLeave);
@@ -172,7 +174,7 @@ function createDefaultState() {
     assignments.rectangular[index] = guestId;
   });
 
-  return { tables, assignments };
+  return { tables, assignments, customGuests: [] };
 }
 
 function loadState() {
@@ -203,6 +205,8 @@ function normalizeState(candidate) {
   }
 
   const tables = normalizeTables(source.tables);
+  const customGuests = normalizeCustomGuests(source.customGuests);
+  const knownGuestIds = new Set([...staticGuestById.keys(), ...customGuests.map((guest) => guest.id)]);
   const assignments = Object.fromEntries(
     tables.map((table) => [table.id, Array(table.capacity).fill(null)]),
   );
@@ -219,7 +223,7 @@ function normalizeState(candidate) {
     }
 
     seats.slice(0, table.capacity).forEach((guestId, index) => {
-      if (!guestId || lockedGuestIds.has(guestId) || !guestById.has(guestId) || seen.has(guestId)) {
+      if (!guestId || lockedGuestIds.has(guestId) || !knownGuestIds.has(guestId) || seen.has(guestId)) {
         return;
       }
 
@@ -233,7 +237,7 @@ function normalizeState(candidate) {
     seen.add(guestId);
   });
 
-  return { tables, assignments };
+  return { tables, assignments, customGuests };
 }
 
 function normalizeTables(candidateTables) {
@@ -255,7 +259,10 @@ function normalizeTables(candidateTables) {
     tables.push({
       id,
       name: String(table.name || "Stół").trim() || "Stół",
-      capacity: Number.isInteger(capacity) && capacity > 0 && capacity <= 30 ? capacity : 10,
+      capacity:
+        Number.isInteger(capacity) && capacity >= minEditableTableCapacity
+          ? Math.min(capacity, maxEditableTableCapacity)
+          : minEditableTableCapacity,
       shape: table.shape === "rectangle" ? "rectangle" : "round",
       locked: false,
     });
@@ -263,6 +270,26 @@ function normalizeTables(candidateTables) {
   });
 
   return Array.isArray(candidateTables) ? tables : cloneDefaultTables();
+}
+
+function normalizeCustomGuests(candidateGuests) {
+  if (!Array.isArray(candidateGuests)) {
+    return [];
+  }
+
+  const seenIds = new Set(staticGuestById.keys());
+  return candidateGuests.reduce((result, guest) => {
+    const id = String(guest?.id || "").trim();
+    const name = String(guest?.name || "").trim();
+
+    if (!id || !name || seenIds.has(id)) {
+      return result;
+    }
+
+    result.push({ id, name, custom: true });
+    seenIds.add(id);
+    return result;
+  }, []);
 }
 
 function saveState() {
@@ -274,11 +301,13 @@ function render() {
   renderUnassigned();
   renderReserveGuests();
   renderTables();
+  renderFloorPlan();
 }
 
 function renderStats() {
   const tables = getTables();
   const assigned = getAssignedIds().size;
+  const plannedGuestCount = getPlanningGuests().length;
   const capacity = tables.reduce((sum, table) => sum + table.capacity, 0);
   const roundTables = tables.filter((table) => table.shape === "round");
   const roundAssigned = roundTables
@@ -286,13 +315,13 @@ function renderStats() {
   const roundCapacity = roundTables.reduce((sum, table) => sum + table.capacity, 0);
 
   statsElement.innerHTML = [
-    statHtml(guests.length, "Potwierdzeni"),
+    statHtml(plannedGuestCount, "Na planie"),
     statHtml(assigned, "Przy stołach"),
-    statHtml(guests.length - assigned, "Do rozsadzenia"),
+    statHtml(getUnassignedGuests().length, "Do rozsadzenia"),
     statHtml(capacity - assigned, "Wolne miejsca"),
   ].join("");
 
-  const unassigned = guests.length - assigned;
+  const unassigned = getUnassignedGuests().length;
   planNotice.textContent =
     unassigned === 0
       ? `Wszyscy przypisani. Wolne miejsca przy okrągłych stołach: ${roundCapacity - roundAssigned}.`
@@ -326,11 +355,23 @@ function renderUnassigned() {
 }
 
 function renderReserveGuests() {
-  reserveCount.textContent = `${reserveGuests.length} osób`;
+  const availableReserveGuests = reserveGuests.filter((guest) => !isAssigned(guest.id));
+
+  reserveCount.textContent = `${availableReserveGuests.length} osób`;
   reserveList.innerHTML = "";
 
-  reserveGuests.forEach((guest) => {
-    reserveList.append(createReserveChip(guest));
+  if (availableReserveGuests.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "Lista jest pusta";
+    reserveList.append(empty);
+    return;
+  }
+
+  availableReserveGuests.forEach((guest) => {
+    const chip = createGuestChip(guest.id);
+    chip.classList.add("reserve-chip");
+    reserveList.append(chip);
   });
 }
 
@@ -352,7 +393,15 @@ function renderTables() {
           <span class="capacity">${table.locked ? "stały skład" : `${table.capacity} miejsc`}</span>
         </div>
         <div class="status-pill">${taken}/${table.capacity}</div>
-        ${table.locked ? "" : `<button class="remove-table" type="button" title="Usuń stół" aria-label="Usuń stół">×</button>`}
+        ${
+          table.locked
+            ? ""
+            : `<div class="table-actions">
+                <button class="seat-count-button" data-seat-action="decrease" type="button" title="Usuń miejsce" aria-label="Usuń miejsce" ${table.capacity <= minEditableTableCapacity ? "disabled" : ""}>−</button>
+                <button class="seat-count-button" data-seat-action="increase" type="button" title="Dodaj miejsce" aria-label="Dodaj miejsce" ${table.capacity >= maxEditableTableCapacity ? "disabled" : ""}>+</button>
+                <button class="remove-table" type="button" title="Usuń stół" aria-label="Usuń stół">×</button>
+              </div>`
+        }
       </div>
     `;
 
@@ -365,6 +414,14 @@ function renderTables() {
 
     card.append(seatList);
     if (!table.locked) {
+      card.querySelector('[data-seat-action="decrease"]').addEventListener("click", (event) => {
+        event.stopPropagation();
+        changeTableCapacity(table.id, -1);
+      });
+      card.querySelector('[data-seat-action="increase"]').addEventListener("click", (event) => {
+        event.stopPropagation();
+        changeTableCapacity(table.id, 1);
+      });
       card.querySelector(".remove-table").addEventListener("click", (event) => {
         event.stopPropagation();
         removeTable(table.id);
@@ -380,6 +437,134 @@ function renderTables() {
     }
     tablesGrid.append(card);
   });
+}
+
+function renderFloorPlan() {
+  floorPlan.innerHTML = "";
+
+  const hall = document.createElement("div");
+  hall.className = "hall-map";
+  const roundTableCount = getTables().filter((table) => table.id !== "rectangular").length;
+  hall.style.minHeight = `${1160 + Math.max(0, Math.ceil((roundTableCount - 8) / 3)) * 320}px`;
+  hall.innerHTML = `
+    <div class="hall-title">Wersja 1</div>
+    <div class="hall-label hall-label-left">(OPCJA I)</div>
+    <div class="hall-label hall-label-right">wejście / wyjście</div>
+    <div class="hall-door hall-door-top hall-door-top-1"></div>
+    <div class="hall-door hall-door-top hall-door-top-2"></div>
+    <div class="hall-door hall-door-top hall-door-top-3"></div>
+    <div class="hall-door hall-door-top hall-door-top-4"></div>
+    <div class="hall-door hall-door-side hall-door-left-1"></div>
+    <div class="hall-door hall-door-side hall-door-left-2"></div>
+    <div class="hall-door hall-door-side hall-door-right-1"></div>
+    <div class="hall-door hall-door-side hall-door-right-2"></div>
+  `;
+
+  const rectangularTable = getTables().find((table) => table.id === "rectangular");
+  if (rectangularTable) {
+    hall.append(createRectangularVisualTable(rectangularTable));
+  }
+
+  getTables()
+    .filter((table) => table.id !== "rectangular")
+    .forEach((table, index) => {
+      hall.append(createRoundVisualTable(table, index));
+    });
+
+  floorPlan.append(hall);
+}
+
+function createRectangularVisualTable(table) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "visual-table visual-rect-table";
+  wrapper.style.left = "170px";
+  wrapper.style.top = "430px";
+
+  const seats = state.assignments[table.id];
+  wrapper.append(createVisualSeatColumn(seats, "left"));
+
+  const core = document.createElement("div");
+  core.className = "visual-rect-core";
+  core.innerHTML = `
+    <strong>${escapeHtml(table.name)}</strong>
+    <span>${seats.filter(Boolean).length}/${table.capacity}</span>
+  `;
+  wrapper.append(core);
+
+  return wrapper;
+}
+
+function createVisualSeatColumn(guestIds, side) {
+  const column = document.createElement("div");
+  column.className = `visual-seat-column ${side}`;
+
+  guestIds.forEach((guestId, index) => {
+    column.append(createVisualSeatLabel(guestId, `Miejsce ${index + 1}`));
+  });
+
+  return column;
+}
+
+function createRoundVisualTable(table, index) {
+  const position = getRoundTablePosition(index);
+  const wrapper = document.createElement("div");
+  wrapper.className = "visual-table visual-round-table";
+  wrapper.style.left = `${position.left}px`;
+  wrapper.style.top = `${position.top}px`;
+
+  const core = document.createElement("div");
+  core.className = "visual-round-core";
+  core.innerHTML = `
+    <strong>${escapeHtml(table.name.replace("Stół okrągły ", "Stół "))}</strong>
+    <span>${state.assignments[table.id].filter(Boolean).length}/${table.capacity}</span>
+  `;
+  wrapper.append(core);
+
+  state.assignments[table.id].forEach((guestId, seatIndex) => {
+    const label = createVisualSeatLabel(guestId, String(seatIndex + 1));
+    const angle = -90 + (360 / table.capacity) * seatIndex;
+    label.classList.add("visual-orbit-seat");
+    label.style.setProperty("--angle", `${angle}deg`);
+    label.style.setProperty("--reverse-angle", `${-angle}deg`);
+    label.style.setProperty("--radius", `${Math.max(160, Math.min(185, 135 + table.capacity * 3))}px`);
+    wrapper.append(label);
+  });
+
+  return wrapper;
+}
+
+function createVisualSeatLabel(guestId, fallbackText) {
+  const label = document.createElement("div");
+  const guest = guestId ? getGuestById(guestId) : null;
+
+  label.className = `visual-seat-label${guest ? "" : " empty"}`;
+  label.textContent = guest ? guest.name : fallbackText;
+  label.title = guest ? guest.name : "Wolne miejsce";
+
+  return label;
+}
+
+function getRoundTablePosition(index) {
+  const basePositions = [
+    { left: 560, top: 185 },
+    { left: 1010, top: 175 },
+    { left: 1460, top: 190 },
+    { left: 1910, top: 210 },
+    { left: 560, top: 585 },
+    { left: 1010, top: 575 },
+    { left: 1460, top: 585 },
+    { left: 1010, top: 970 },
+  ];
+
+  if (index < basePositions.length) {
+    return basePositions[index];
+  }
+
+  const extraIndex = index - basePositions.length;
+  return {
+    left: 560 + (extraIndex % 3) * 450,
+    top: 1280 + Math.floor(extraIndex / 3) * 320,
+  };
 }
 
 function createSeat(table, index, guestId) {
@@ -415,21 +600,34 @@ function createSeat(table, index, guestId) {
 }
 
 function createGuestChip(guestId, locked = false) {
-  const guest = guestById.get(guestId);
+  const guest = getGuestById(guestId);
+  if (!guest) {
+    const missing = document.createElement("div");
+    missing.className = "empty-state";
+    missing.textContent = "Nieznana osoba";
+    return missing;
+  }
+
   const chip = document.createElement("div");
+  const isCustom = isCustomGuest(guestId);
+  const isReserve = reserveGuests.some((reserveGuest) => reserveGuest.id === guestId);
+
   chip.className = `guest-chip${locked || lockedGuestIds.has(guestId) ? " locked" : ""}`;
   chip.draggable = !(locked || lockedGuestIds.has(guestId));
   chip.dataset.guestId = guestId;
   chip.tabIndex = 0;
-  chip.title = `${guest.name}, wiersz Excela ${guest.row}`;
+  chip.title = guest.row ? `${guest.name}, wiersz Excela ${guest.row}` : `${guest.name}, dodany ręcznie`;
 
-  const duplicateLabel = nameCounts.get(guest.name) > 1 ? `wiersz ${guest.row}` : "";
+  const meta = getGuestMeta(guest, isReserve, isCustom);
   chip.innerHTML = `
     <span class="guest-main">
       <span class="guest-name">${escapeHtml(guest.name)}</span>
-      ${duplicateLabel ? `<span class="guest-meta">${duplicateLabel}</span>` : ""}
+      ${meta ? `<span class="guest-meta">${escapeHtml(meta)}</span>` : ""}
     </span>
   `;
+
+  const actions = document.createElement("span");
+  actions.className = "chip-actions";
 
   if (!locked && !lockedGuestIds.has(guestId) && isAssigned(guestId)) {
     const remove = document.createElement("button");
@@ -443,7 +641,24 @@ function createGuestChip(guestId, locked = false) {
       selectedGuestId = null;
       persistAndRender();
     });
-    chip.append(remove);
+    actions.append(remove);
+  }
+
+  if (isCustom) {
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-custom-guest";
+    deleteButton.type = "button";
+    deleteButton.setAttribute("aria-label", `Usuń ${guest.name} z listy`);
+    deleteButton.textContent = "Usuń";
+    deleteButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteCustomGuest(guestId);
+    });
+    actions.append(deleteButton);
+  }
+
+  if (actions.children.length > 0) {
+    chip.append(actions);
   }
 
   if (guestId === selectedGuestId) {
@@ -478,20 +693,6 @@ function createGuestChip(guestId, locked = false) {
   return chip;
 }
 
-function createReserveChip(guest) {
-  const chip = document.createElement("div");
-  chip.className = "guest-chip reserve-chip locked";
-  chip.title = `${guest.name}, wiersz Excela ${guest.row}`;
-  chip.innerHTML = `
-    <span class="guest-main">
-      <span class="guest-name">${escapeHtml(guest.name)}</span>
-      <span class="guest-meta">wiersz ${guest.row}</span>
-    </span>
-  `;
-
-  return chip;
-}
-
 function handleDragOver(event) {
   event.preventDefault();
   event.currentTarget.classList.add("drag-over");
@@ -506,7 +707,7 @@ function getDraggedGuestId(event) {
 }
 
 function moveGuestToTable(guestId, tableId) {
-  if (!guestId || lockedGuestIds.has(guestId)) {
+  if (!guestId || lockedGuestIds.has(guestId) || !getGuestById(guestId)) {
     return;
   }
 
@@ -521,7 +722,7 @@ function moveGuestToTable(guestId, tableId) {
 }
 
 function moveGuestToSlot(guestId, tableId, targetIndex) {
-  if (!guestId || lockedGuestIds.has(guestId)) {
+  if (!guestId || lockedGuestIds.has(guestId) || !getGuestById(guestId)) {
     return;
   }
 
@@ -554,6 +755,42 @@ function unassignGuest(guestId) {
     return;
   }
   state.assignments[location.tableId][location.index] = null;
+}
+
+function changeTableCapacity(tableId, delta) {
+  const table = getTables().find((item) => item.id === tableId);
+  if (!table || table.locked) {
+    return;
+  }
+
+  if (delta > 0) {
+    if (table.capacity >= maxEditableTableCapacity) {
+      showToast(`Maksymalnie ${maxEditableTableCapacity} miejsc przy stole`);
+      return;
+    }
+
+    table.capacity += 1;
+    state.assignments[table.id].push(null);
+    persistAndRender();
+    return;
+  }
+
+  if (table.capacity <= minEditableTableCapacity) {
+    showToast(`Minimum to ${minEditableTableCapacity} miejsc przy stole`);
+    return;
+  }
+
+  const seats = state.assignments[table.id];
+  const emptyIndex = seats.lastIndexOf(null);
+  const removeIndex = emptyIndex === -1 ? seats.length - 1 : emptyIndex;
+  const [removedGuestId] = seats.splice(removeIndex, 1);
+  table.capacity -= 1;
+  selectedGuestId = selectedGuestId === removedGuestId ? null : selectedGuestId;
+  persistAndRender();
+
+  if (removedGuestId) {
+    showToast("Usunięte miejsce było zajęte, gość wrócił na listę");
+  }
 }
 
 function addTable() {
@@ -596,6 +833,52 @@ function removeTable(tableId) {
   showToast(`Usunięto ${table.name}`);
 }
 
+function addCustomGuest(event) {
+  event.preventDefault();
+  const name = newGuestNameInput.value.trim();
+
+  if (!name) {
+    showToast("Wpisz imię i nazwisko");
+    return;
+  }
+
+  const guest = {
+    id: `custom-guest-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    name,
+    custom: true,
+  };
+
+  state.customGuests.push(guest);
+  newGuestNameInput.value = "";
+  searchInput.value = "";
+  persistAndRender();
+  showToast(`Dodano ${name}`);
+}
+
+function deleteCustomGuest(guestId) {
+  const guest = getGuestById(guestId);
+  if (!guest || !isCustomGuest(guestId)) {
+    return;
+  }
+
+  const location = findGuestLocation(guestId);
+  const confirmed =
+    !location || window.confirm(`Usunąć ${guest.name}? Osoba zniknie też z przypisanego stołu.`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  if (location) {
+    state.assignments[location.tableId][location.index] = null;
+  }
+
+  state.customGuests = state.customGuests.filter((customGuest) => customGuest.id !== guestId);
+  selectedGuestId = selectedGuestId === guestId ? null : selectedGuestId;
+  persistAndRender();
+  showToast(`Usunięto ${guest.name}`);
+}
+
 function getNextRoundTableNumber() {
   return (
     getTables().reduce((highest, table) => {
@@ -620,6 +903,7 @@ function resetPlan() {
   state = createDefaultState();
   selectedGuestId = null;
   searchInput.value = "";
+  newGuestNameInput.value = "";
   persistAndRender();
   showToast("Przywrócono układ początkowy");
 }
@@ -645,13 +929,43 @@ function getAssignedIds() {
   return ids;
 }
 
+function getPlanningGuests() {
+  const assigned = getAssignedIds();
+  const assignedReserveGuests = reserveGuests.filter((guest) => assigned.has(guest.id));
+  return [...guests, ...state.customGuests, ...assignedReserveGuests];
+}
+
 function getUnassignedGuests() {
   const assigned = getAssignedIds();
-  return guests.filter((guest) => !assigned.has(guest.id));
+  return [...guests, ...state.customGuests].filter((guest) => !assigned.has(guest.id));
 }
 
 function isAssigned(guestId) {
   return Boolean(findGuestLocation(guestId));
+}
+
+function getGuestById(guestId) {
+  return staticGuestById.get(guestId) || state.customGuests.find((guest) => guest.id === guestId);
+}
+
+function isCustomGuest(guestId) {
+  return state.customGuests.some((guest) => guest.id === guestId);
+}
+
+function getNameCount(name) {
+  return [...guests, ...reserveGuests, ...state.customGuests].filter((guest) => guest.name === name).length;
+}
+
+function getGuestMeta(guest, isReserve, isCustom) {
+  if (isCustom) {
+    return "dodany ręcznie";
+  }
+
+  if (isReserve) {
+    return `rezerwowy, wiersz ${guest.row}`;
+  }
+
+  return getNameCount(guest.name) > 1 ? `wiersz ${guest.row}` : "";
 }
 
 function findGuestLocation(guestId) {
@@ -673,10 +987,11 @@ function normalizeText(value) {
 
 function savePlanToFile() {
   const payload = {
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     tables: state.tables,
     assignments: state.assignments,
+    customGuests: state.customGuests,
   };
   const json = JSON.stringify(payload, null, 2);
   const blob = new Blob([json], { type: "application/json;charset=utf-8" });
@@ -700,6 +1015,7 @@ async function importPlanFromFile(event) {
     state = nextState;
     selectedGuestId = null;
     searchInput.value = "";
+    newGuestNameInput.value = "";
     persistAndRender();
     showToast("Wczytano plan stołów");
   } catch {
@@ -714,21 +1030,21 @@ function exportCsv() {
 
   getTables().forEach((table) => {
     state.assignments[table.id].forEach((guestId, index) => {
-      const guest = guestId ? guestById.get(guestId) : null;
+      const guest = guestId ? getGuestById(guestId) : null;
       rows.push([
         table.name,
         String(index + 1),
         guest ? guest.name : "",
-        guest ? String(guest.row) : "",
+        guest?.row ? String(guest.row) : "",
       ]);
     });
   });
 
   getUnassignedGuests().forEach((guest) => {
-    rows.push(["Nieprzydzieleni", "", guest.name, String(guest.row)]);
+    rows.push(["Nieprzydzieleni", "", guest.name, guest.row ? String(guest.row) : ""]);
   });
 
-  reserveGuests.forEach((guest) => {
+  reserveGuests.filter((guest) => !isAssigned(guest.id)).forEach((guest) => {
     rows.push(["Rezerwowi", "", guest.name, String(guest.row)]);
   });
 

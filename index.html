@@ -38,6 +38,10 @@
             </div>
             <input id="guestSearch" class="search" type="search" placeholder="Szukaj osoby" />
           </div>
+          <form id="addGuestForm" class="add-guest-form">
+            <input id="newGuestName" class="text-input" type="text" placeholder="Nowa osoba" />
+            <button class="button" type="submit">Dodaj</button>
+          </form>
           <div id="unassignedList" class="guest-list drop-target" data-target="unassigned"></div>
         </section>
 
@@ -63,6 +67,16 @@
         <div id="tablesGrid" class="tables-grid"></div>
       </section>
     </main>
+
+    <section class="floor-plan-section">
+      <div class="section-top">
+        <div>
+          <h2>Wizualizacja sali</h2>
+          <div class="notice">Układ orientacyjny według szkicu, aktualizowany z przypisań przy stołach.</div>
+        </div>
+      </div>
+      <div id="floorPlan" class="floor-plan" aria-label="Graficzny układ stołów"></div>
+    </section>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
