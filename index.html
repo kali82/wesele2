@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan stołów - wesele</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <h1>Plan stołów</h1>
+          <p>Wesele: lista potwierdzonych gości z Excela</p>
+        </div>
+      </div>
+
+      <div class="stats" id="stats" aria-live="polite"></div>
+
+      <div class="actions">
+        <button class="button" id="exportCsv" type="button">CSV</button>
+        <button class="button" id="clearRoundTables" type="button">Wyczyść okrągłe</button>
+        <button class="button danger" id="resetPlan" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <aside class="guest-panel">
+        <div class="panel-top">
+          <div>
+            <h2>Nieprzydzieleni</h2>
+            <span id="unassignedCount" class="muted"></span>
+          </div>
+          <input id="guestSearch" class="search" type="search" placeholder="Szukaj osoby" />
+        </div>
+        <div id="unassignedList" class="guest-list drop-target" data-target="unassigned"></div>
+      </aside>
+
+      <section class="tables-panel">
+        <div class="section-top">
+          <h2>Stoły</h2>
+          <div id="planNotice" class="notice"></div>
+        </div>
+        <div id="tablesGrid" class="tables-grid"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
