@@ -765,3 +765,176 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  :root {
+    --bg: #ffffff;
+    --shadow: none;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .actions,
+  .guest-panel,
+  .table-actions,
+  .remove-guest,
+  .delete-custom-guest,
+  .toast {
+    display: none !important;
+  }
+
+  .app-header {
+    position: static;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    gap: 12px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid #cbd5e1;
+    background: #ffffff;
+    backdrop-filter: none;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 15px;
+  }
+
+  .brand p,
+  .muted,
+  .notice {
+    font-size: 10px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(4, 82px);
+    gap: 5px;
+  }
+
+  .stat {
+    min-width: 0;
+    padding: 5px 6px;
+    box-shadow: none;
+  }
+
+  .stat strong {
+    font-size: 15px;
+  }
+
+  .stat span {
+    font-size: 8px;
+  }
+
+  .app-shell {
+    display: block;
+    width: 100%;
+    padding: 8px 0 0;
+  }
+
+  .tables-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .table-card {
+    break-inside: avoid;
+    border-color: #cbd5e1;
+    box-shadow: none;
+  }
+
+  .table-head,
+  .table-card.locked .table-head {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .table-symbol {
+    width: 26px;
+    height: 26px;
+  }
+
+  .capacity,
+  .status-pill {
+    font-size: 9px;
+  }
+
+  .status-pill {
+    min-width: 38px;
+    padding: 2px 5px;
+  }
+
+  .seat-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .seat {
+    min-height: 26px;
+  }
+
+  .seat.empty {
+    font-size: 8px;
+  }
+
+  .guest-chip {
+    min-height: 24px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    cursor: default;
+  }
+
+  .guest-name {
+    font-size: 8px;
+    line-height: 1.05;
+  }
+
+  .guest-meta {
+    display: none;
+  }
+
+  .floor-plan-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    break-before: page;
+  }
+
+  .floor-plan-section .section-top {
+    margin-bottom: 2px;
+  }
+
+  .floor-plan {
+    height: 580px;
+    overflow: visible;
+    padding: 24px 0 0;
+  }
+
+  .hall-map {
+    min-width: 2200px;
+    width: 2200px;
+    box-shadow: none;
+    transform: scale(0.48);
+    transform-origin: top left;
+  }
+}

@@ -134,6 +134,7 @@ const toast = document.querySelector("#toast");
 const planFileInput = document.querySelector("#planFileInput");
 
 document.querySelector("#exportCsv").addEventListener("click", exportCsv);
+document.querySelector("#exportPdf").addEventListener("click", exportPdf);
 document.querySelector("#savePlan").addEventListener("click", savePlanToFile);
 document.querySelector("#loadPlan").addEventListener("click", () => planFileInput.click());
 document.querySelector("#addTable").addEventListener("click", addTable);
@@ -1053,6 +1054,12 @@ function exportCsv() {
     .join("\n");
   const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
   downloadBlob(blob, "plan-stolow-wesele.csv");
+}
+
+function exportPdf() {
+  renderFloorPlan();
+  showToast("W oknie drukowania wybierz zapis jako PDF");
+  window.print();
 }
 
 function downloadBlob(blob, fileName) {
